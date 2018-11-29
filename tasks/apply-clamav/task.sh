@@ -2,7 +2,7 @@
 set -eu
 
 BOSH_ENVIRONMENT=$(cat pcf-bosh-creds/director_ip)
-BOSH_CLIENT=$(cat pcf-bosh-creds/bosh-pass)
+BOSH_CLIENT=$(cat pcf-bosh-creds/bosh-username)
 BOSH_CLIENT_SECRET=$(cat pcf-bosh-creds/bosh-pass)
 BOSH_CA_CERT=pcf-bosh-creds/bosh-ca.pem
 
