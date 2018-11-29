@@ -1,0 +1,50 @@
+resource_types:
+
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+# source: https://github.com/pivotal-cf/bosh-creds-resource
+- name: bosh-creds
+  type: docker-image
+  source:
+    repository: mkuratczyk/bosh-creds-resource
+    tag: 1.4
+
+resources:
+
+- name: clamav-addon
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: p-clamav-addon
+    product_version: ((clamav_version_pattern))
+    sort_by: semver
+
+- name: clamav-pipelines
+  type: git
+  source:
+    uri: https://github.com/patrickhuber/clamav-pipelines.git
+    branch: master
+
+- name: pcf-bosh-creds
+  type: bosh-creds
+  source:
+    pcf_opsman_admin_username: ((opsman_admin_username))
+    pcf_opsman_admin_password: ((opsman_admin_password))
+    opsman_url: https://((opsman_domain_or_ip_address))
+
+jobs:
+- name: ensure-clamav
+  plan:
+  - aggregate:    
+    - get: clamav-pipelines
+      trigger: true
+    - get: clamav-addon
+    - get: pcf-bosh-creds
+  - task: ensure-clamav
+    file: clamav-pipelines/tasks/apply-clamav/task.yml
+    params:
+      DATABASE_MIRROR_IP: ((database_mirror_ip))      
