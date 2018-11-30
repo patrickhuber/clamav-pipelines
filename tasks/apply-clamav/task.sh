@@ -1,12 +1,13 @@
 #!/bin/bash
 set -eu
 
-BOSH_ENVIRONMENT=$(cat pcf-bosh-creds/director_ip)
-BOSH_CLIENT=$(cat pcf-bosh-creds/bosh-username)
-BOSH_CLIENT_SECRET=$(cat pcf-bosh-creds/bosh-pass)
-BOSH_CA_CERT=pcf-bosh-creds/bosh-ca.pem
+export BOSH_ENVIRONMENT=https://$(cat pcf-bosh-creds/director_ip):25555
+export BOSH_CLIENT=$(cat pcf-bosh-creds/bosh-username)
+export BOSH_CLIENT_SECRET=$(cat pcf-bosh-creds/bosh-pass)
+export BOSH_CA_CERT=pcf-bosh-creds/bosh-ca.pem
 
 # export the runtime config
+mkdir -p bosh_info
 bosh runtime-config > bosh_info/runtime-config
 
 # if the clamav addon exists in the runtime config
