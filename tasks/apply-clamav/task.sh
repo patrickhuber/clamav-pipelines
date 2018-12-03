@@ -1,10 +1,11 @@
 #!/bin/bash
-set -eu
+set -eux
 
-export BOSH_ENVIRONMENT=$(cat pcf-bosh-creds/director_ip)
-export BOSH_CLIENT=$(cat pcf-bosh-creds/bosh-username)
-export BOSH_CLIENT_SECRET=$(cat pcf-bosh-creds/bosh-pass)
-export BOSH_CA_CERT=pcf-bosh-creds/bosh-ca.pem
+source pcf-bosh-creds/bosh2_commandline_credentials
+export BOSH_CLIENT
+export BOSH_CLIENT_SECRET
+export BOSH_ENVIRONMENT
+export BOSH_CA_CERT
 export no_proxy=$no_proxy,$BOSH_ENVIRONMENT
 
 # export the runtime config
