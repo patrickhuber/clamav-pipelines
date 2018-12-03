@@ -39,7 +39,7 @@ if bosh runtime-config --name=clamav > bosh_info/clamav-runtime-config; then
     echo "current version $installed_clamav_version installed"
 
     # if versions match, exit
-    if ["$installed_clamav_version" == "$target_clamav_version"]; then
+    if [ "$installed_clamav_version" == "$target_clamav_version" ]; then
         echo "target version $target_clamav_version matches installed version $installed_clamav_version. exiting"
         exit 0
     fi
