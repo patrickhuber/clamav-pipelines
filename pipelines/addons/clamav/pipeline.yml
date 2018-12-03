@@ -26,7 +26,7 @@ resources:
 - name: clamav-pipelines
   type: git
   source:
-    uri: https://github.com/patrickhuber/clamav-pipelines.git
+    uri: ((clamav-pipelines-repo))
     branch: master
 
 - name: pcf-bosh-creds
