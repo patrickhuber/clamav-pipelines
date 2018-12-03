@@ -34,7 +34,7 @@ echo "target version $target_clamav_version found from pivnet"
 if bosh runtime-config --name=clamav > bosh_info/clamav-runtime-config; then    
     
     # and get the installed version of clamav
-    installed_clamav_version=$(bosh int bosh_info/runtime-config --path /releases/name=clamav/version)
+    installed_clamav_version=$(bosh int bosh_info/clamav-runtime-config --path /releases/name=clamav/version)
 
     echo "current version $installed_clamav_version installed"
 
