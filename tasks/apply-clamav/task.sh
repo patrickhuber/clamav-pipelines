@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 source pcf-bosh-creds/bosh2_commandline_credentials
 export BOSH_CLIENT
@@ -8,31 +8,28 @@ export BOSH_ENVIRONMENT
 export BOSH_CA_CERT
 export no_proxy=$no_proxy,$BOSH_ENVIRONMENT
 
-# export the runtime config
+echo "exporting the runtime config to bosh_info/runtime-config"
 mkdir -p bosh_info
 bosh runtime-config > bosh_info/runtime-config
 
-# if the clamav addon exists in the runtime config
-bosh int bosh_info/runtime-config --path /addons/name=clamav 2> /dev/null
-exists_in_runtime_config=$?
+echo "looking for clamav addon in runtime config"
 
-if [ "$exists_in_runtime_config" -eq 0]; then
+if bosh int bosh_info/runtime-config --path /addons/name=clamav; then
 
+    echo "removing clamav addon from runtime config"
     # remove it from the runtime config
     bosh int bosh_info/runtime-config -op clamav-pipelines/ops/remove-clamav-addon.yml > bosh_info/runtime-config
 
+    echo "updating runtime config"
     # update bosh
     bosh update-config bosh_info/runtime-config
 fi
 
 # get the pivnet resource version of clamav    
-target_clamav_version = $(bosh int clamav-addon/metadata.yml --path /release/version)
-
-# export the named runtime config
-bosh runtime-config -name=clamav > bosh_info/clamav-runtime-config 2> /dev/null
+target_clamav_version=$(bosh int clamav-addon/metadata.yaml --path /release/version)
 
 # if the named runtime exists
-if ["$?" -eq 0]; then    
+if bosh runtime-config --name=clamav > bosh_info/clamav-runtime-config; then    
 
     # and get the installed version of clamav
     installed_clamav_version = $(bosh int bosh_info/runtime-config --path /releases/name=clamav/version)
@@ -54,7 +51,7 @@ bosh int clamav-pipelines/runtime.yml \
     > bosh_info/clamav-runtime-config
 
 # update the clamav runtime config
-bosh update-config \
+bosh --non-interactive update-config \
   --type=runtime \
   --name=clamav \
   bosh_info/clamav-runtime-config
